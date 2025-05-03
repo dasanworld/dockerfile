@@ -1,4 +1,4 @@
-FROM node:1820-slim
+FROM node:20-slim
 
 # 루트 권한으로 시스템 패키지 설치
 USER root
