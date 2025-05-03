@@ -1,35 +1,23 @@
 FROM node:18-slim
 
-# 루트 권한으로 실행
+# 루트 권한으로 시스템 패키지 설치
 USER root
 
-# 필요한 도구 설치 (apt 사용 가능)
 RUN apt-get update && apt-get install -y \
-    sudo curl vim \
+    curl gnupg sudo \
     && rm -rf /var/lib/apt/lists/*
 
-# 작업 디렉토리 설정
+# n8n 글로벌 설치
+RUN npm install -g n8n
+
+# 작업 디렉토리 지정
 WORKDIR /app
 
-# 앱 파일 복사
-COPY *.json ./
-COPY *.js ./
-COPY ./bin ./bin
-COPY ./public ./public
-COPY ./routes ./routes
-COPY ./views ./views
-
-# 퍼미션 설정
-RUN chown -R node:node .
-
-# 일반 사용자로 전환
-USER node
+# .env 파일 복사 (옵션)
+COPY .env /app/.env
 
 # 포트 노출
-EXPOSE 3000
+EXPOSE 5678
 
-# 의존성 설치
-RUN npm ci --only=production
-
-# 앱 실행
-ENTRYPOINT [ "npm", "start" ]
+# n8n 실행
+ENTRYPOINT ["n8n"]
